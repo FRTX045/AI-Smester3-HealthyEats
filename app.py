@@ -130,4 +130,5 @@ def analyze():
         return render_template('index.html', error=f"Error: {str(e)}")
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)
+
