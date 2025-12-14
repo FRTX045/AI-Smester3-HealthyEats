@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthyEats - AI Food Analyzer</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            300: '#86efac',
+                            400: '#4ade80',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                 00: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body class="bg-gray-50 min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
+
+    <!-- Background Decor -->
+    <div class="fixed inset-0 -z-10 overflow-hidden pointer-events-none">
+        <div
+            class="absolute top-0 left-0 w-full h-full bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-brand-100/50 via-gray-50 to-gray-50">
+        </div>
+        <div class="absolute -top-[20%] -right-[10%] w-[50%] h-[50%] rounded-full bg-blue-100/40 blur-3xl"></div>
+        <div class="absolute top-[20%] -left-[10%] w-[40%] h-[40%] rounded-full bg-brand-100/40 blur-3xl"></div>
+    </div>
+
+    <!-- Navbar -->
+    <nav class="sticky top-0 z-40 w-full backdrop-blur-md bg-white/70 border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 rounded-lg bg-brand-500 text-white flex items-center justify-center">
+                        <i class="fas fa-leaf text-sm"></i>
+                    </div>
+                    <span class="font-bold text-xl tracking-tight text-gray-900">HealthyEats</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-4xl w-full text-center space-y-8">
+
+            <!-- Hero Header -->
+            <div class="space-y-4">
+                <h1 class="text-4xl md:text-6xl font-bold tracking-tight text-gray-900">
+                    Eat Smarter, <span
+                        class="text-brand-600 bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-emerald-400">Live
+                        Better</span>
+                </h1>
+                <p class="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto">
+                    Upload a photo of your meal and let our AI analyze its nutritional value instantly.
+                </p>
+            </div>
+
+            <form id="upload-form" action="/analyze" method="post" enctype="multipart/form-data"
+                class="w-full max-w-2xl mx-auto">
+                <div
+                    class="bg-white/80 backdrop-blur-xl rounded-3xl shadow-xl shadow-gray-200/50 border border-white p-6 md:p-10 transition-all hover:shadow-2xl hover:shadow-brand-100/50 duration-500">
+
+                    {% if error %}
+                    <div
+                        class="mb-6 p-4 rounded-xl bg-red-50 border border-red-100 text-red-700 text-sm font-medium flex items-center gap-3">
+                        <i class="fas fa-exclamation-circle text-lg"></i>
+                        {{ error }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Upload Area -->
+                    <div class="file-drop-area relative group cursor-pointer">
+                        <input class="file-input absolute inset-0 w-full h-full opacity-0 z-10 cursor-pointer"
+                            type="file" name="file" accept="image/*">
+                        <div
+                            class="w-full h-64 border-2 border-dashed border-gray-200 rounded-2xl flex flex-col items-center justify-center bg-gray-50/50 transition-all duration-300 group-hover:border-brand-400 group-hover:bg-brand-50/30 overflow-hidden">
+
+                            <!-- Initial State -->
+                            <div
+                                class="preview-placeholder flex flex-col items-center justify-center space-y-4 transition-opacity duration-300">
+                                <div
+                                    class="w-16 h-16 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center shadow-sm group-hover:scale-110 transition-transform duration-300">
+                                    <i class="fas fa-cloud-upload-alt text-2xl"></i>
+                                </div>
+                                <div class="text-center px-4">
+                                    <p class="text-gray-900 font-medium">Click or drag image here</p>
+                                    <p class="text-sm text-gray-500 mt-1">Supports JPG, PNG, WEBP</p>
+                                </div>
+                            </div>
+
+                            <!-- Image Preview -->
+                            <img src="" alt="Preview"
+                                class="preview-image absolute inset-0 w-full h-full object-cover hidden transition-opacity duration-500">
+                        </div>
+                    </div>
+
+                    <!-- Options -->
+                    <div class="mt-8 space-y-6">
+                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-xl border border-gray-100">
+                            <div class="flex items-center gap-3">
+                                <div
+                                    class="w-10 h-10 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center">
+                                    <i class="fas fa-calculator"></i>
+                                </div>
+                                <div class="text-left">
+                                    <p class="font-semibold text-gray-900 text-sm">Personalized Analysis</p>
+                                    <p class="text-xs text-gray-500">Calculate daily calorie needs percentage</p>
+                                </div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="calorie-toggle" name="calculate_needs" value="true"
+                                    class="sr-only peer">
+                                <div
+                                    class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-500 shadow-inner">
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- User Details Form -->
+                        <div id="user-form"
+                            class="user-form hidden space-y-4 animate-fade-in-down border-t border-gray-100 pt-6">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1 text-left">
+                                    <label
+                                        class="text-xs font-semibold text-gray-600 uppercase tracking-wider ml-1">Age</label>
+                                    <input type="number" name="age"
+                                        class="form-input user-input w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="Years">
+                                </div>
+                                <div class="space-y-1 text-left">
+                                    <label
+                                        class="text-xs font-semibold text-gray-600 uppercase tracking-wider ml-1">Gender</label>
+                                    <select name="gender"
+                                        class="form-select user-input w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all bg-white">
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="space-y-1 text-left">
+                                    <label
+                                        class="text-xs font-semibold text-gray-600 uppercase tracking-wider ml-1">Weight</label>
+                                    <input type="number" name="weight" step="0.1"
+                                        class="form-input user-input w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="kg">
+                                </div>
+                                <div class="space-y-1 text-left">
+                                    <label
+                                        class="text-xs font-semibold text-gray-600 uppercase tracking-wider ml-1">Height</label>
+                                    <input type="number" name="height"
+                                        class="form-input user-input w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all placeholder:text-gray-400"
+                                        placeholder="cm">
+                                </div>
+                            </div>
+                            <div class="space-y-1 text-left">
+                                <label
+                                    class="text-xs font-semibold text-gray-600 uppercase tracking-wider ml-1">Activity</label>
+                                <select name="activity"
+                                    class="form-select user-input w-full px-4 py-2 rounded-lg border border-gray-200 focus:border-brand-500 focus:ring-2 focus:ring-brand-200 outline-none transition-all bg-white">
+                                    <option value="sedentary">Sedentary (Little/no exercise)</option>
+                                    <option value="light">Lightly Active (1-3 days)</option>
+                                    <option value="moderate">Moderately Active (3-5 days)</option>
+                                    <option value="active">Active (6-7 days)</option>
+                                    <option value="very_active">Very Active (Physical job)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit"
+                            class="w-full bg-brand-600 hover:bg-brand-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg shadow-brand-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                            <span>Analyze Food</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="py-8 text-center space-y-2">
+        <p class="text-sm text-gray-500 font-medium">&copy; 2025 HealthyEats AI</p>
+        <div
+            class="flex items-center justify-center gap-2 text-xs text-brand-600 font-semibold bg-brand-50 inline-block px-4 py-2 rounded-full mx-auto w-fit border border-brand-100">
+            <i class="fas fa-heartbeat"></i>
+            <span>Supporting SDG 3: Good Health and Well-being</span>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay"
+        class="fixed inset-0 bg-white/90 backdrop-blur-sm z-50 hidden flex-col items-center justify-center space-y-4">
+        <div class="relative w-20 h-20">
+            <div class="absolute inset-0 border-4 border-gray-200 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-brand-500 rounded-full border-t-transparent animate-spin">
+            </div>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <i class="fas fa-utensils text-brand-500 text-xl"></i>
+            </div>
+        </div>
+        <div class="text-center">
+            <h3 class="text-xl font-bold text-gray-900">Analyzing your plate</h3>
+            <p class="text-gray-500 mt-1">Identifying ingredients and nutrients...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script>
+        // Inline script to handle file preview logic specifically for new classes
+        const dropArea = document.querySelector('.file-drop-a rea');
+        const fileInput = document.querySelector('.file-input');
+        const previewImage = document.querySelector('.preview-image');
+        const pl aceholder = document.querySelector('.preview-placeholder');
+
+        if (fileInput) {
+            fileInput.addEventListener('change', function (e) {
+                const file = this.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        previewImage.s rc = e.target.result;
+                        previewImage.classList.remove('hidden');
+                        placeholder.classList.add('hidden', 'opacity-0');
+                    }
+                    reader.readAsDataURL(file);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

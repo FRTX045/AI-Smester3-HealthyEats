@@ -1,0 +1,31 @@
+/* 
+  Most styling is now handled by Tailwind CSS in the HTML files.
+  This file remains for any specific overrides or legacy support if needed.
+*/
+
+/* Custom animations if Tailwind animate-spin is not enough */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.animate-fade-in-down {
+    animation: fadeInDown 0.5s ease-out;
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
